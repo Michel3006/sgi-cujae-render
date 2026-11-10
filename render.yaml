@@ -47,5 +47,5 @@ services:
 databases:
   - name: sgi-db
     databaseName: sistema_unificado_c_c_q
-    user: postgres
+    user: sgiappuser
     ipAllowList: []

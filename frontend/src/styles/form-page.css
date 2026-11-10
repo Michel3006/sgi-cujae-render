@@ -1,0 +1,237 @@
+/* Shared layout and controls for forms and detail views (Fase 4) */
+
+.form-page,
+.group-form,
+.project-form,
+.record-form {
+  width: 100%;
+}
+
+.form-page__toolbar-intro {
+  margin: 0 0 var(--spacing-lg);
+}
+
+.form-page .page-toolbar.form-page__toolbar {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* —— Sections —— */
+.form-page .form-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-page .form-section h3,
+.form-page .form-section__title {
+  margin: 0 0 var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  border-bottom: 2px solid var(--color-bg-tertiary);
+  letter-spacing: 0.01em;
+}
+
+/* —— Grid & fields —— */
+.form-page .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.form-page .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-page .form-group > label,
+.form-page .form-group label:not(.checkbox-label):not(.list-page__checkbox) {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.form-page .required {
+  color: var(--color-error);
+}
+
+.form-page .field-error {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+}
+
+.form-page .error-message {
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+/* —— Native controls (forms use raw inputs alongside <Input />) —— */
+.form-page .form-textarea,
+.form-page textarea.form-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-page .form-textarea:focus,
+.form-page textarea.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 131, 92, 0.15);
+}
+
+.form-page .form-select,
+.form-page select.form-select {
+  width: 100%;
+  padding: 0.625rem 2rem 0.625rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-page .form-select:focus,
+.form-page select.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 131, 92, 0.15);
+}
+
+.form-page .form-select:disabled {
+  background-color: var(--color-bg-secondary);
+  cursor: not-allowed;
+}
+
+/* —— Tabs —— */
+.form-page .form-tabs,
+.form-page .tabs {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: 0;
+  border-bottom: 2px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.form-page .tab-button {
+  padding: 0.875rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.form-page .tab-button:hover {
+  color: var(--color-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.form-page .tab-button.active {
+  color: var(--color-primary-dark);
+  border-bottom-color: var(--color-primary);
+}
+
+.form-page .tab-content {
+  padding: var(--spacing-md) 0 0;
+}
+
+.form-page .tab-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-page .tab-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.form-page .tab-header p {
+  width: 100%;
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* —— Actions —— */
+.form-page .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.form-page .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  padding: var(--spacing-md);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.form-page .checkbox-label:hover {
+  background: rgba(0, 131, 92, 0.12);
+}
+
+.form-page .form-checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-primary);
+}
+
+/* Cards inside forms */
+.form-page .card {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-page .card:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .form-page .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-page .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-page .form-actions .btn {
+    width: 100%;
+  }
+}

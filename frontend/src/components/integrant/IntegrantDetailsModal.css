@@ -1,0 +1,57 @@
+.integrant-details-modal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.integrant-details-loading,
+.integrant-details-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.integrant-details-error {
+  color: #c33;
+}
+
+.integrant-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.integrant-details-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  background: var(--light-green);
+  border-radius: 0.5rem;
+  border-left: 4px solid var(--primary-green);
+}
+
+.integrant-details-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.integrant-details-item label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.integrant-details-item span {
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .integrant-details-grid {
+    grid-template-columns: 1fr;
+  }
+}

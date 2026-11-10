@@ -1,0 +1,53 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0 -- D:\SCHOOL\TESIS\Backend\modelo_api\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\SCHOOL\TESIS\Backend\modelo_api
+plugins: anyio-4.13.0, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 31 items
+
+tests/test_api_blackbox.py::test_health_returns_ok PASSED                [  3%]
+tests/test_api_blackbox.py::test_ask_data_status_reports_ready PASSED    [  6%]
+tests/test_api_blackbox.py::test_ask_data_rejects_empty_question PASSED  [  9%]
+tests/test_api_blackbox.py::test_ask_data_direct_answer_without_database PASSED [ 12%]
+tests/test_api_blackbox.py::test_ask_data_sql_path_with_mocked_llm_and_db PASSED [ 16%]
+tests/test_api_blackbox.py::test_ask_data_rejects_invalid_llm_json PASSED [ 19%]
+tests/test_api_blackbox.py::test_ask_data_rejects_forbidden_sql_from_llm PASSED [ 22%]
+tests/test_ask_data_prompts.py::test_domain_context_mentions_cujae PASSED [ 25%]
+tests/test_ask_data_prompts.py::test_synonym_glossary_maps_integrant PASSED [ 29%]
+tests/test_ask_data_prompts.py::test_fuzzy_rules_forbid_exact_equality PASSED [ 32%]
+tests/test_ask_data_prompts.py::test_sql_system_prompt_includes_schema_and_limits PASSED [ 35%]
+tests/test_ask_data_prompts.py::test_answer_prompt_mentions_cujae_and_no_hallucination PASSED [ 38%]
+tests/test_sql_fuzzy.py::test_equality_becomes_ilike_single_token PASSED [ 41%]
+tests/test_sql_fuzzy.py::test_equality_multiword_uses_and PASSED         [ 45%]
+tests/test_sql_fuzzy.py::test_numeric_equality_unchanged PASSED          [ 48%]
+tests/test_sql_fuzzy.py::test_ilike_without_wildcards_gets_tokens PASSED [ 51%]
+tests/test_sql_guard.py::test_rejects_empty_sql PASSED                   [ 54%]
+tests/test_sql_guard.py::test_rejects_sql_comments PASSED                [ 58%]
+tests/test_sql_guard.py::test_rejects_multiple_statements PASSED         [ 61%]
+tests/test_sql_guard.py::test_rejects_non_select PASSED                  [ 64%]
+tests/test_sql_guard.py::test_rejects_forbidden_keywords PASSED          [ 67%]
+tests/test_sql_guard.py::test_appends_limit_when_missing PASSED          [ 70%]
+tests/test_sql_guard.py::test_caps_limit_when_exceeds_max PASSED         [ 74%]
+tests/test_sql_guard.py::test_applies_fuzzy_on_name_equality PASSED      [ 77%]
+tests/test_sql_llm.py::test_parse_json_with_sql PASSED                   [ 80%]
+tests/test_sql_llm.py::test_parse_json_direct_answer_only PASSED         [ 83%]
+tests/test_sql_llm.py::test_parse_markdown_sql_fence PASSED              [ 87%]
+tests/test_sql_llm.py::test_prefers_sql_when_both_sql_and_direct_answer PASSED [ 90%]
+tests/test_sql_llm.py::test_invalid_response_raises PASSED               [ 93%]
+tests/test_sql_llm.py::test_extract_sql_from_llm_response PASSED         [ 96%]
+tests/test_sql_llm.py::test_extract_sql_fails_on_direct_answer PASSED    [100%]
+
+============================== warnings summary ===============================
+tests/test_api_blackbox.py::test_health_returns_ok
+tests/test_api_blackbox.py::test_ask_data_status_reports_ready
+tests/test_api_blackbox.py::test_ask_data_rejects_empty_question
+tests/test_api_blackbox.py::test_ask_data_direct_answer_without_database
+tests/test_api_blackbox.py::test_ask_data_sql_path_with_mocked_llm_and_db
+tests/test_api_blackbox.py::test_ask_data_rejects_invalid_llm_json
+tests/test_api_blackbox.py::test_ask_data_rejects_forbidden_sql_from_llm
+  D:\SCHOOL\TESIS\Backend\modelo_api\.venv\Lib\site-packages\httpx\_client.py:680: DeprecationWarning: The 'app' shortcut is now deprecated. Use the explicit style 'transport=WSGITransport(app=...)' instead.
+    warnings.warn(message, DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 31 passed, 7 warnings in 2.90s ========================

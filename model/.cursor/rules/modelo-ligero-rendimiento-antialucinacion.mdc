@@ -1,0 +1,57 @@
+---
+description: API del modelo IA — rendimiento con modelos ligeros y cero alucinaciones
+globs: model/**
+alwaysApply: false
+---
+
+# Modelo ligero: velocidad y cero alucinaciones
+
+Trabaja en `model/` asumiendo **LM Studio + modelos pequeños** (p. ej. n_ctx≈4096). Prioriza latencia y respuestas **verificables**, no creatividad del LLM.
+
+## Rendimiento (optimizar tiempo)
+
+- **Minimiza llamadas al LLM**: en `/ask-data` mantén el flujo de 2 pasadas (SQL → respuesta); no añadas pasadas extra salvo que sea imprescindible.
+- **Acota contexto y salida** vía `Settings` (`config.py`): `sql_schema_max_chars`, `ask_data_max_tokens_sql`, `ask_data_max_tokens_answer`, `ask_data_max_rows_in_prompt`, `sql_max_rows`.
+- **Recorta el esquema** con `_prepare_schema_for_llm`; no envíes `schema_context.txt` completo si el modelo es ligero.
+- **Temperatura baja** en generación SQL (≈0–0.3); en respuestas finales cap ≤0.5. No subas temperature para “sonar mejor”.
+- **Reutiliza** `complete_chat_text` y el `httpx.AsyncClient` compartido; evita instanciar clientes por request.
+- **Evita streaming** en rutas que necesitan JSON/SQL completo; usa `/chat/stream` solo para chat genérico.
+- Antes de ampliar prompts o tokens, estima: `system + user + max_tokens < n_ctx del modelo`.
+
+## Anti-alucinación (obligatorio)
+
+El modelo **no es fuente de verdad**. Los datos vienen de PostgreSQL o de `direct_answer` explícito.
+
+1. **Primera pasada (SQL)**: salida **solo JSON** parseada con `parse_ask_data_first_response`. Prohibido confiar en texto libre o markdown sin validar.
+2. **Validación dura**: todo SQL pasa por `validate_and_fix_select` (`sql_guard.py`) antes de ejecutar. Rechaza si no es un único `SELECT`.
+3. **Segunda pasada (respuesta)**: el system prompt debe exigir usar **únicamente** el JSON de filas devuelto por la BD. Si `row_count=0`, decir que no hay datos — **nunca inventar cifras, nombres ni instituciones**.
+4. **Esquema cerrado**: tablas/columnas solo las de `schema_context.txt`. Sin columnas, filtros ni universidades inventadas (ver `ask_data_prompts.py`).
+5. **Dominio CUJAE**: no mezclar otras instituciones ni datos externos. Saludos/temas fuera del esquema → `{"sql":null,"direct_answer":"..."}`, no SQL inventado.
+6. **Errores de BD**: respuesta cordial vía `_friendly_answer_after_sql_failure`; **no** exponer SQL, stack traces ni mensajes de Postgres al usuario.
+7. **Sin atajos peligrosos**: no desactivar `sql_guard`, no ejecutar SQL del modelo sin validar, no rellenar huecos con suposiciones del LLM.
+
+## Al cambiar código
+
+- Prompts nuevos → añadir en `ask_data_prompts.py`, no inline en routers.
+- Ajustes de límites → preferir variables en `.env` / `Settings`, no magic numbers.
+- Si el modelo falla en JSON, **refuerza el formato** en el prompt; no sustituyas por parsing laxo que acepte alucinaciones.
+
+## Perfil modelo ligero (auto: `lfm2.5-1.2b`, `1.2b`, `lfm`, etc.)
+
+- `schema_router.py`: envía solo tablas relevantes a la pregunta (no el esquema completo de 16k chars).
+- Prompts `compact=True` con ejemplos few-shot JSON.
+- Reintento único si el JSON no parsea.
+- **Respuesta final determinista** desde filas BD (`answer_formatter.py`): evita la 2.ª llamada LLM → más rápido y sin inventar datos.
+- Temperatura 0 y menos tokens (`model_profile.py`). Modelos pesados (p. ej. Llama 3.1) siguen el flujo completo sin cambios.
+
+## Ejemplo de respuesta correcta vs incorrecta
+
+```python
+# ❌ MAL — inventa datos sin consultar la BD
+return AskDataResponse(answer="Hay 42 proyectos en CUJAE", used_database=False, ...)
+
+# ✅ BIEN — datos verificados o admisión explícita de vacío
+rows = await conn.fetch(safe_sql)
+answer = await complete_chat_text(..., user_content=json.dumps(rows[:cap]))
+return AskDataResponse(answer=answer, row_count=len(rows), used_database=True, ...)
+```

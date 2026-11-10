@@ -1,0 +1,63 @@
+.options-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.options-menu-trigger {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text-secondary, var(--color-text-secondary));
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.options-menu-trigger:hover {
+  background-color: var(--surface-hover, var(--color-bg-secondary));
+  color: var(--text-primary, var(--color-text-primary));
+}
+
+.options-menu-dropdown {
+  border: 1px solid var(--color-border, var(--border, #e5e5e5));
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  min-width: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Fondo opaco: evita ver la tabla a través del menú si --surface no está definido */
+  background-color: var(--color-bg-primary, #ffffff);
+}
+
+.options-menu-dropdown--portal {
+  position: fixed;
+  overscroll-behavior: contain;
+}
+
+.options-menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-primary, var(--color-text-primary));
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.options-menu-item:hover {
+  background-color: var(--surface-hover, var(--color-bg-secondary));
+}
+
+.options-menu-item.delete {
+  color: #dc2626;
+}
+
+.options-menu-item.delete:hover {
+  background-color: #fee;
+}

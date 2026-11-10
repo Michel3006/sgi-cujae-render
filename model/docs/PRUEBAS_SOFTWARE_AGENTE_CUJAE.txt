@@ -1,0 +1,306 @@
+================================================================================
+  PRUEBAS DE SOFTWARE — AGENTE CONVERSACIONAL (CHATBOT)
+  Sistema de gestión de la investigación — CUJAE
+  Backend: modelo_api
+================================================================================
+
+Fecha de ejecución automatizada: mayo 2026
+Herramienta: pytest 9.0.3, Python 3.11.9
+Resultado global: 31 pruebas PASADAS (0 fallidas)
+Log completo: docs/resultados_pruebas_ejecucion.txt
+
+Comando de reproducción:
+  cd modelo_api
+  set PYTHONPATH=.
+  .venv\Scripts\python.exe -m pytest tests\ -v
+
+Dependencias de prueba: pip install -r requirements-dev.txt
+
+--------------------------------------------------------------------------------
+1. OBJETIVO Y ALCANCE DE LAS PRUEBAS
+--------------------------------------------------------------------------------
+
+Este documento describe las pruebas realizadas sobre el backend del agente que
+responde preguntas sobre la producción científica de la CUJAE. El alcance cubre:
+
+  - Módulos críticos de seguridad SQL y parsing de respuestas del LLM.
+  - Reglas de dominio en prompts (CUJAE, sinónimos, búsqueda fuzzy).
+  - Contrato REST del API (caja negra) con dependencias externas simuladas.
+
+Quedan fuera de la automatización (pero se recomiendan como pruebas manuales de
+integración en la tesis):
+
+  - LM Studio real con un modelo concreto y GPU.
+  - PostgreSQL institucional con datos de producción o copia anonimizada.
+  - Pruebas de usabilidad con usuarios del sistema de gestión.
+
+--------------------------------------------------------------------------------
+2. TIPOS DE PRUEBA APLICADOS
+--------------------------------------------------------------------------------
+
+2.1. Pruebas de CAJA BLANCA (white box)
+---------------------------------------
+Se conoce la estructura interna del código. Se prueban funciones y ramas
+concretas sin levantar necesariamente el servidor completo.
+
+  Módulos: sql_fuzzy, sql_guard, sql_llm, ask_data_prompts.
+
+2.2. Pruebas de CAJA NEGRA (black box)
+--------------------------------------
+Se ejercita el sistema por su interfaz pública (HTTP) sin depender de la
+implementación interna. El cliente es TestClient de FastAPI; LM Studio y
+PostgreSQL se sustituyen por mocks donde corresponde.
+
+  Módulo: test_api_blackbox.py (endpoints /health, /chat/ask-data, /status).
+
+2.3. Pruebas de INTEGRACIÓN (recomendadas, manuales)
+----------------------------------------------------
+No automatizadas en este repositorio por requerir servicios externos:
+
+  I1. LM Studio encendido + POST /chat/ask-data con pregunta real.
+  I2. PostgreSQL con DATABASE_URL + pregunta que devuelva filas reales.
+  I3. Verificar que usuario PostgreSQL no puede ejecutar INSERT/UPDATE/DELETE
+      aunque el modelo los sugiera (sql_guard + privilegios BD).
+
+--------------------------------------------------------------------------------
+3. MATRIZ RESUMEN DE PRUEBAS AUTOMATIZADAS
+--------------------------------------------------------------------------------
+
+| ID   | Tipo caja | Archivo              | Cantidad | Resultado |
+|------|-----------|----------------------|----------|-----------|
+| CB01 | Blanca    | test_sql_fuzzy.py    | 4        | OK        |
+| CB02 | Blanca    | test_sql_guard.py    | 8        | OK        |
+| CB03 | Blanca    | test_sql_llm.py      | 7        | OK        |
+| CB04 | Blanca    | test_ask_data_prompts| 5        | OK        |
+| CN01 | Negra     | test_api_blackbox.py | 7        | OK        |
+|      | TOTAL     |                      | 31       | 31 OK     |
+
+--------------------------------------------------------------------------------
+4. DETALLE DE PRUEBAS DE CAJA BLANCA
+--------------------------------------------------------------------------------
+
+4.1. Módulo sql_fuzzy — Normalización de búsqueda por similitud
+---------------------------------------------------------------
+OBJETIVO: Garantizar que filtros por nombres/títulos no usen igualdad exacta,
+problema frecuente cuando el usuario escribe mal un nombre o solo el apellido.
+
+CB01.1  test_equality_becomes_ilike_single_token
+  Entrada:  SELECT ... WHERE i.name = 'Garcia'
+  Esperado: Sustitución por LOWER(i.name) ILIKE '%garcia%'
+  Justificación: Valida la regla de negocio “búsqueda por fragmentos”.
+
+CB01.2  test_equality_multiword_uses_and
+  Entrada:  f.fullname = 'Maria Lopez'
+  Esperado: Dos ILIKE unidos con AND (%maria% y %lopez%)
+  Justificación: Nombres compuestos deben coincidir en todas las partes.
+
+CB01.3  test_numeric_equality_unchanged
+  Entrada:  p.id_faculty = 3
+  Esperado: SQL idéntico (sin ILIKE)
+  Justificación: IDs numéricos deben seguir siendo comparación exacta.
+
+CB01.4  test_ilike_without_wildcards_gets_tokens
+  Entrada:  a.title ILIKE 'Redes neuronales' (sin %)
+  Esperado: Tokenización en %redes% y %neuronales%
+  Justificación: El LLM a veces omite comodines; el backend los corrige.
+
+4.2. Módulo sql_guard — Seguridad de consultas
+-----------------------------------------------
+OBJETIVO: El agente solo puede ejecutar SELECT acotados; evita inyección o
+destructores si el modelo alucina SQL malicioso.
+
+CB02.1  test_rejects_empty_sql
+  Esperado: ValueError “SQL vacío”
+  Justificación: Entrada inválida no debe llegar a PostgreSQL.
+
+CB02.2  test_rejects_sql_comments
+  Entrada:  SELECT con comentario --
+  Justificación: Comentarios pueden ocultar código en ataques de inyección.
+
+CB02.3  test_rejects_multiple_statements
+  Entrada:  SELECT ...; DELETE ...
+  Justificación: Una sola sentencia por petición del chatbot.
+
+CB02.4  test_rejects_non_select
+  Entrada:  DELETE FROM integrant
+  Justificación: Política de solo lectura a nivel aplicación.
+
+CB02.5  test_rejects_forbidden_keywords
+  Entrada:  SELECT DROP TABLE integrant
+  Justificación: Palabras reservadas destructivas aunque empiecen por SELECT.
+
+CB02.6  test_appends_limit_when_missing
+  Esperado: Añade LIMIT según SQL_MAX_ROWS
+  Justificación: Evita respuestas enormes y sobrecarga del LLM en 2.ª pasada.
+
+CB02.7  test_caps_limit_when_exceeds_max
+  Entrada:  LIMIT 500 con máximo configurado 50
+  Justificación: El tope institucional prevalece sobre el del modelo.
+
+CB02.8  test_applies_fuzzy_on_name_equality
+  Integración guard + fuzzy en un mismo flujo de validación.
+
+4.3. Módulo sql_llm — Interpretación de respuestas del modelo
+-------------------------------------------------------------
+OBJETIVO: El primer paso del agente exige JSON estructurado; este módulo debe
+ser tolerante a formatos alternativos sin aceptar basura.
+
+CB03.1  test_parse_json_with_sql
+  Entrada:  {"sql":"SELECT 1","direct_answer":null}
+  Justificación: Camino feliz text-to-SQL.
+
+CB03.2  test_parse_json_direct_answer_only
+  Entrada:  sql null + direct_answer (saludo / fuera de alcance)
+  Justificación: No toda interacción requiere base de datos.
+
+CB03.3  test_parse_markdown_sql_fence
+  Entrada:  Bloque ```sql ... ```
+  Justificación: Algunos modelos ignoran JSON y usan markdown.
+
+CB03.4  test_prefers_sql_when_both_sql_and_direct_answer
+  Justificación: Si hay SELECT válido, prevalece consulta sobre texto libre.
+
+CB03.5  test_invalid_response_raises
+  Justificación: Error controlado → HTTP 400 en el router.
+
+CB03.6  test_extract_sql_from_llm_response
+  Justificación: API auxiliar para flujos que solo necesitan SQL.
+
+CB03.7  test_extract_sql_fails_on_direct_answer
+  Justificación: Evita ejecutar BD cuando la respuesta es conversacional.
+
+4.4. Módulo ask_data_prompts — Reglas de dominio CUJAE
+-------------------------------------------------------
+OBJETIVO: Verificar que los prompts contienen las restricciones que reducen
+alucinaciones (institución, sinónimos, ILIKE).
+
+CB04.1  test_domain_context_mentions_cujae
+CB04.2  test_synonym_glossary_maps_integrant
+CB04.3  test_fuzzy_rules_forbid_exact_equality
+CB04.4  test_sql_system_prompt_includes_schema_and_limits
+CB04.5  test_answer_prompt_mentions_cujae_and_no_hallucination
+
+  Justificación global: Los prompts son “código ejecutado por el LLM”; si faltan
+  reglas, el comportamiento del agente degrada aunque el código Python sea correcto.
+
+--------------------------------------------------------------------------------
+5. DETALLE DE PRUEBAS DE CAJA NEGRA (API REST)
+--------------------------------------------------------------------------------
+
+CONFIGURACIÓN DE PRUEBA:
+  - TestClient sobre create_app() con pool PostgreSQL falso (_FakePool).
+  - Esquema mínimo en memoria (tabla integrant).
+  - complete_chat_text mockeado donde se indica (sin LM Studio real).
+  - Prefijo de rutas leído de configuración (API_PREFIX, ej. /api).
+
+CN01.1  test_health_returns_ok
+  Método: GET {API_PREFIX}/health
+  Esperado: 200, {"status":"ok"}
+  Justificación: Disponibilidad del servicio para monitoreo y frontend.
+
+CN01.2  test_ask_data_status_reports_ready
+  Método: GET .../chat/ask-data/status
+  Esperado: ready=true, schema_nonempty=true
+  Justificación: Diagnóstico antes de mostrar el chatbot al usuario.
+
+CN01.3  test_ask_data_rejects_empty_question
+  Método: POST .../chat/ask-data, question=""
+  Esperado: 422 Unprocessable Entity (validación Pydantic min_length=1)
+  Justificación: Contrato de entrada del chatbot.
+
+CN01.4  test_ask_data_direct_answer_without_database
+  Mock LLM: {"sql":null,"direct_answer":"...CUJAE..."}
+  Esperado: used_database=false, row_count=0
+  Justificación: Saludos no deben disparar consultas SQL.
+
+CN01.5  test_ask_data_sql_path_with_mocked_llm_and_db
+  Mock LLM (2 llamadas): generación SQL + respuesta final
+  Mock BD: una fila {"name":"Investigador Prueba"}
+  Esperado: used_database=true, SELECT en sql_executed, row_count>=1
+  Justificación: Camino completo ask-data sin servicios externos.
+
+CN01.6  test_ask_data_rejects_invalid_llm_json
+  Mock LLM: texto sin JSON
+  Esperado: HTTP 400
+  Justificación: Fallo controlado ante modelo no conforme.
+
+CN01.7  test_ask_data_rejects_forbidden_sql_from_llm
+  Mock LLM: {"sql":"DELETE FROM integrant",...}
+  Esperado: HTTP 400 con “Validación SQL”
+  Justificación: Seguridad ante sugerencias destructivas del LLM.
+
+--------------------------------------------------------------------------------
+6. PRUEBAS MANUALES SUGERIDAS PARA LA TESIS (INTEGRACIÓN)
+--------------------------------------------------------------------------------
+
+A continuación se listan casos que deben documentarse con capturas o tablas en
+la tesis, ejecutados por el autor en su entorno:
+
+PM01 — Conectividad LM Studio
+  Paso: GET /api/models con servidor LM Studio activo.
+  Criterio: Lista de modelos sin error 502.
+
+PM02 — Pregunta factual con BD real
+  Pregunta ejemplo: “¿Cuántos integrantes hay registrados?”
+  Criterio: row_count > 0, respuesta en español coherente con JSON devuelto.
+
+PM03 — Búsqueda por nombre aproximado
+  Pregunta: nombre con error ortográfico o solo apellido.
+  Criterio: sql_executed contiene ILIKE; resultados no vacíos si existen datos.
+
+PM04 — Mención de CUJAE sin filtro espurio
+  Pregunta: “Proyectos de la facultad X en la Cujae”
+  Criterio: No aparece WHERE ... '%CUJAE%' inventado; usa facultad del esquema.
+
+PM05 — Pregunta fuera de dominio
+  Pregunta: “¿Clima en La Habana?”
+  Criterio: direct_answer sin SQL o respuesta que indique falta de datos.
+
+PM06 — Usuario BD solo lectura
+  Paso: Intentar INSERT manual con el mismo usuario de DATABASE_URL.
+  Criterio: PostgreSQL rechaza; refuerza defensa en profundidad.
+
+--------------------------------------------------------------------------------
+7. TRAZABILIDAD REQUISITO ↔ PRUEBA (PARA CAPÍTULO DE TESIS)
+--------------------------------------------------------------------------------
+
+| Requisito funcional / no funcional        | Pruebas que lo cubren        |
+|------------------------------------------|------------------------------|
+| Responder en lenguaje natural            | CN01.4, CN01.5, CB03, CB04   |
+| Consultar solo datos institucionales     | CB04.1, PM04               |
+| No ejecutar SQL destructivo              | CB02.4–CB02.5, CN01.7      |
+| Limitar volumen de datos                 | CB02.6–CB02.7              |
+| Búsqueda por nombres no exacta           | CB01.*, CB02.8, PM03       |
+| Mapeo de sinónimos del usuario           | CB04.2, PM03               |
+| API disponible para frontend             | CN01.1, CN01.2             |
+| Validar entradas del usuario             | CN01.3                     |
+| Tolerar formatos imperfectos del LLM     | CB03.3, CB03.5             |
+
+--------------------------------------------------------------------------------
+8. LIMITACIONES CONOCIDAS DE LA ESTRATEGIA DE PRUEBA
+--------------------------------------------------------------------------------
+
+  1. Los mocks no garantizan que un modelo real siempre genere JSON válido.
+  2. _FakePool no reproduce todos los tipos de asyncpg.Record (suficiente para
+     pruebas de conteo y serialización básica).
+  3. No se mide latencia ni consumo de tokens (pruebas no funcionales futuras).
+  4. sql_guard puede rechazar SELECT legítimos que contengan palabras como
+     DELETE dentro de cadenas literales — trade-off seguridad/falsos positivos.
+
+--------------------------------------------------------------------------------
+9. CONCLUSIÓN
+--------------------------------------------------------------------------------
+
+Se implementó y ejecutó una batería de 31 pruebas automatizadas (23 caja blanca,
+7 caja negra, 1 integrada guard+fuzzy en CB02.8), todas exitosas. Esto respalda
+la corrección de los componentes críticos del agente: seguridad SQL, parsing del
+LLM, reglas CUJAE en prompts y contrato REST de ask-data.
+
+Para la defensa de tesis se recomienda complementar con las seis pruebas manuales
+de integración (PM01–PM06) usando LM Studio y la base PostgreSQL del sistema de
+gestión de la investigación, documentando evidencias (capturas, SQL ejecutado,
+respuesta al usuario).
+
+================================================================================
+Fin del documento
+================================================================================

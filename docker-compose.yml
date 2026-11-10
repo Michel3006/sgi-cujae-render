@@ -1,0 +1,48 @@
+services:
+  sgi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /sgi-api
+        VITE_CHAT_API_BASE_URL: /model-api
+    image: sgi-unificado:latest
+    container_name: sgi-unificado
+    ports:
+      - "${HTTP_PORT:-8080}:80"           # Frontend + APIs vía nginx
+      - "${BACKEND_PORT:-8000}:8000"       # Backend directo (opcional)
+      - "${MODEL_API_PORT:-8001}:8001"    # API modelo IA (chat / ask-data)
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sgi_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-sistema_unificado_c_c_q}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:sgi_secret@127.0.0.1:5432/sistema_unificado_c_c_q}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-*}
+      # LDAP
+      LDAP_ENABLED: ${LDAP_ENABLED:-true}
+      LDAP_HOST: ${LDAP_HOST:-10.8.1.125}
+      LDAP_PORT: ${LDAP_PORT:-636}
+      LDAP_USE_SSL: ${LDAP_USE_SSL:-true}
+      LDAP_BIND_DN: ${LDAP_BIND_DN:-}
+      LDAP_BIND_PASSWORD: ${LDAP_BIND_PASSWORD:-}
+      LDAP_BASE_DN: ${LDAP_BASE_DN:-dc=cujae,dc=edu,dc=cu}
+      LDAP_VALIDATE_CERT: ${LDAP_VALIDATE_CERT:-false}
+      # Modelo IA → servidor de inferencia externo (configurable sin rebuild)
+      LM_STUDIO_BASE_URL: ${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
+      LM_STUDIO_API_KEY: ${LM_STUDIO_API_KEY:-}
+      DEFAULT_MODEL: ${DEFAULT_MODEL:-local-model}
+      SQL_MAX_ROWS: ${SQL_MAX_ROWS:-100}
+      ASK_DATA_MAX_ROWS_IN_PROMPT: ${ASK_DATA_MAX_ROWS_IN_PROMPT:-50}
+      # Zenodo
+      ZENODO_API_URL: ${ZENODO_API_URL:-https://sandbox.zenodo.org}
+      ZENODO_ACCESS_TOKEN: ${ZENODO_ACCESS_TOKEN:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - sgi_pgdata:/var/lib/postgresql/data
+      - sgi_uploads:/app/backend/uploads
+    restart: unless-stopped
+
+volumes:
+  sgi_pgdata:
+  sgi_uploads:

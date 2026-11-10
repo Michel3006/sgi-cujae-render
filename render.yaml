@@ -1,0 +1,51 @@
+# render.yaml — Despliegue en Render (entorno de prueba)
+# SGI Unificado — Sistema de Gestión de Investigaciones CUJAE
+# Servicios: Backend FastAPI (sirve API + Frontend estático) + Base de datos PostgreSQL
+# Usuario de prueba: admin / admin123 (todos los roles)
+
+services:
+  - type: web
+    name: sgi-backend
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    plan: starter
+    region: oregon
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sgi-db
+          property: connectionString
+      - key: LDAP_ENABLED
+        value: "false"
+      - key: ZENODO_API_URL
+        value: "https://sandbox.zenodo.org"
+      - key: ZENODO_ACCESS_TOKEN
+        value: ""
+      - key: BACKEND_CORS_ORIGINS
+        value: "*"
+      - key: LM_STUDIO_BASE_URL
+        value: ""
+      - key: LM_STUDIO_API_KEY
+        value: ""
+      - key: DEFAULT_MODEL
+        value: "local-model"
+      - key: SQL_MAX_ROWS
+        value: "100"
+      - key: ASK_DATA_MAX_ROWS_IN_PROMPT
+        value: "50"
+      - key: SECRET_KEY
+        value: "sgi_clave_secreta_entorno_prueba_render"
+      - key: ADMIN_USERNAME
+        value: "admin"
+      - key: ADMIN_PASSWORD
+        value: "admin123"
+      - key: FRONTEND_STATIC_DIR
+        value: "/app/backend/static"
+    healthCheckPath: /api/
+
+databases:
+  - name: sgi-db
+    databaseName: sistema_unificado_c_c_q
+    user: postgres
+    ipAllowList: []

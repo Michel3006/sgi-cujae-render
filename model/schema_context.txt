@@ -1,0 +1,467 @@
+# Esquema generado desde .cursor/bd/sistema_integrado.sql (volcado PostgreSQL).
+# Esquema: public — en SQL usar solo SELECT.
+# La tabla "group" es palabra reservada: referenciarla como public."group" (comillas dobles).
+# Regenerar: python scripts/extract_schema_from_dump.py
+#
+# DOMINIO: Sistema de producción científica de la CUJAE (Universidad Tecnológica José Antonio Echeverría).
+# Todos los registros son de esa institución; no buscar ni inventar otras universidades por nombre.
+# Búsqueda por nombres/títulos: LOWER(campo) ILIKE '%fragmento%' (nunca = con el texto literal del usuario).
+# Sinónimos: integrante/docente/investigador → integrant; facultad → faculty; grupo → "group"; proyecto → project.
+#
+# Relaciones útiles (el modelo suele equivocarse si esto no está explícito):
+# - public.articles NO tiene id_faculty ni id_faculty_area; tiene id_project → join public.project (p.id_project) y usar p.id_faculty.
+# - Varios productos (books, norms, patents, softwares, theses, monographs, encounters, prizes) llevan id_project y/o id_group; facultad suele ir por project.id_faculty.
+
+Tabla: public.articles
+  - id_article integer DEFAULT nextval('public.articles_id_article_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - journal character varying NOT NULL
+  - voulume character varying NOT NULL
+  - pages character varying NOT NULL
+  - number character varying
+  - keywords character varying
+  - doi character varying
+  - resume character varying
+  - id_article_type integer
+  - report_date date
+  - issn character varying
+  - id_country integer
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+  - published boolean DEFAULT true NOT NULL
+
+Tabla: public.articles_authors
+  - id_article_author integer DEFAULT nextval('public.articles_authors_id_article_author_seq'::regclass) NOT NULL
+  - id_article integer
+  - id_author integer
+
+Tabla: public.articles_types
+  - id_article_type integer DEFAULT nextval('public.articles_types_id_article_type_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.books
+  - id_book integer DEFAULT nextval('public.books_id_book_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - chapter_title character varying NOT NULL
+  - editor character varying
+  - voulume character varying
+  - number character varying
+  - series character varying
+  - pages character varying
+  - publisher character varying
+  - keywords character varying
+  - resume character varying
+  - isbn character varying
+  - report_date date
+  - id_country integer
+  - is_chapter boolean DEFAULT false NOT NULL
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.books_authors
+  - id_book_author integer DEFAULT nextval('public.books_authors_id_book_author_seq'::regclass) NOT NULL
+  - id_book integer
+  - id_author integer
+
+Tabla: public.cientific_degree
+  - id_cientific_degree integer NOT NULL
+  - name character varying NOT NULL
+
+Tabla: public.conseil_users
+  - id_conseil integer DEFAULT nextval('public.conseil_users_id_conseil_seq'::regclass) NOT NULL
+  - id_integrant integer NOT NULL
+  - id_faculty integer
+  - "desc" character varying
+
+Tabla: public.countries
+  - id_country integer NOT NULL
+  - name character varying
+  - capital character varying
+  - code character varying
+
+Tabla: public.docent_degree
+  - id_docent_degree integer NOT NULL
+  - name character varying NOT NULL
+
+Tabla: public.encounters
+  - id_encounter integer DEFAULT nextval('public.encounters_id_encounter_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - encounter_name character varying NOT NULL
+  - keywords character varying
+  - resume character varying
+  - id_encounter_type integer
+  - report_date date
+  - isbn character varying
+  - city character varying
+  - issn character varying
+  - organizer character varying
+  - id_country integer
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.encounters_authors
+  - id_encounter_author integer DEFAULT nextval('public.encounters_authors_id_encounter_author_seq'::regclass) NOT NULL
+  - id_encounter integer
+  - id_author integer
+
+Tabla: public.encounters_types
+  - id_encounter_type integer DEFAULT nextval('public.encounters_types_id_encounter_type_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.evaluation
+  - id_evaluation integer NOT NULL
+  - name character varying NOT NULL
+
+Tabla: public.expected_result
+  - id_expected_result integer DEFAULT nextval('public.expected_result_id_expected_result_seq'::regclass) NOT NULL
+  - name character varying
+  - description character varying
+  - id_project integer
+  - sort_order integer DEFAULT 0
+  - id_expected_result_state integer DEFAULT 1 NOT NULL
+  - accomplish_date date
+
+Tabla: public.expected_result_state
+  - id_expected_result_state integer DEFAULT nextval('public.expected_result_state_id_expected_result_state_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.faculties_areas
+  - id_faculty_area integer NOT NULL
+  - name character varying
+  - id_faculty integer
+
+Tabla: public.faculty
+  - id_faculty integer NOT NULL
+  - name character varying NOT NULL
+  - fullname character varying
+
+Tabla: public.general_category
+  - id_general_category integer NOT NULL
+  - name character varying NOT NULL
+
+Tabla: public.group
+  - id_group integer NOT NULL
+  - name character varying NOT NULL
+  - subjects character varying NOT NULL
+  - problems character varying NOT NULL
+  - id_faculty_area integer
+  - id_integrant integer NOT NULL
+  - id_faculty integer NOT NULL
+  - create_date timestamp without time zone NOT NULL
+  - update_date timestamp without time zone NOT NULL
+
+Tabla: public.group_integrant
+  - id_group_integrant integer NOT NULL
+  - id_group integer NOT NULL
+  - id_integrant integer NOT NULL
+  - admin boolean DEFAULT false NOT NULL
+
+Tabla: public.integrant
+  - id_integrant integer NOT NULL
+  - name character varying NOT NULL
+  - identity character varying
+  - external boolean
+  - email character varying
+  - phone character varying
+  - available_time integer
+  - work_center character varying
+  - curriculum character varying
+  - id_faculty_area integer
+  - id_cientific_degree integer
+  - id_country integer
+  - id_faculty integer
+  - id_docent_degree integer
+  - id_general_category integer
+
+Tabla: public.integrant_evaluation
+  - id_integrant_evaluation integer NOT NULL
+  - id_integrant integer NOT NULL
+  - id_group integer NOT NULL
+  - year integer NOT NULL
+  - id_evaluation integer
+  - description character varying
+
+Tabla: public.integrant_expected_result
+  - id_integrant_expected_result integer DEFAULT nextval('public.integrant_expected_result_id_integrant_expected_result_seq'::regclass) NOT NULL
+  - id_integrant integer
+  - id_expected_result integer
+
+Tabla: public.integrant_research_task
+  - id_integrant_research_task integer DEFAULT nextval('public.integrant_research_task_id_integrant_research_task_seq'::regclass) NOT NULL
+  - id_integrant integer
+  - id_research_task integer
+
+Tabla: public.integrant_role
+  - id_integrant_role integer NOT NULL
+  - id_integrant integer NOT NULL
+  - id_role integer NOT NULL
+
+Tabla: public.keyword
+  - id_keyword integer DEFAULT nextval('public.keyword_id_keyword_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.monographs
+  - id_monograph integer DEFAULT nextval('public.monographs_id_monograph_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - isbn character varying NOT NULL
+  - pages character varying NOT NULL
+  - number character varying
+  - month character varying
+  - keywords character varying
+  - resume character varying
+  - cenda character varying
+  - report_date date
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_country integer
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.monographs_authors
+  - id_monograph_author integer DEFAULT nextval('public.monographs_authors_id_monograph_author_seq'::regclass) NOT NULL
+  - id_monograph integer
+  - id_author integer
+
+Tabla: public.norms
+  - id_norm integer DEFAULT nextval('public.norms_id_norm_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - registration_number character varying NOT NULL
+  - pages character varying NOT NULL
+  - keywords character varying
+  - resume character varying
+  - id_norm_type integer
+  - report_date date
+  - id_country integer
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.norms_authors
+  - id_norm_author integer DEFAULT nextval('public.norms_authors_id_norm_author_seq'::regclass) NOT NULL
+  - id_norm integer
+  - id_author integer
+
+Tabla: public.norms_types
+  - id_norm_type integer DEFAULT nextval('public.norms_types_id_norm_type_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.patents
+  - id_patent integer DEFAULT nextval('public.patents_id_patent_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - reg_number character varying NOT NULL
+  - yearfiled character varying NOT NULL
+  - language character varying
+  - assignee character varying
+  - monthfield character varying
+  - keywords character varying
+  - resume character varying
+  - report_date date
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_country integer
+  - is_conceded boolean DEFAULT false NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.patents_authors
+  - id_patent_author integer DEFAULT nextval('public.patents_authors_id_patent_author_seq'::regclass) NOT NULL
+  - id_patent integer
+  - id_author integer
+
+Tabla: public.prizes
+  - id_prize integer DEFAULT nextval('public.prizes_id_prize_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - grant_institution character varying NOT NULL
+  - keywords character varying
+  - resume character varying
+  - id_prize_type integer
+  - report_date date
+  - id_country integer
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.prizes_authors
+  - id_prize_author integer DEFAULT nextval('public.prizes_authors_id_prize_author_seq'::regclass) NOT NULL
+  - id_prize integer
+  - id_author integer
+
+Tabla: public.prizes_types
+  - id_prize_type integer DEFAULT nextval('public.prizes_types_id_prize_type_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.project
+  - id_project integer DEFAULT nextval('public.project_id_project_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - code character varying NOT NULL
+  - id_responsible integer
+  - thematic character varying
+  - id_project_type integer
+  - art_state character varying
+  - cientific_problem character varying
+  - study_object character varying
+  - study_field character varying
+  - hypothesis character varying
+  - main_objective character varying
+  - research_methods character varying
+  - interested_third_party character varying
+  - national_group character varying
+  - international_group character varying
+  - publish_magazine character varying
+  - participate_events character varying
+  - citma_code character varying
+  - minvec_code character varying
+  - approved boolean DEFAULT false
+  - conseil_criteria character varying
+  - initial_date date
+  - final_date date
+  - update_date date
+  - id_project_state integer
+  - id_project_classification integer
+  - economic_budget character varying
+  - economic_needs character varying
+  - id_faculty integer
+  - concluded boolean DEFAULT false NOT NULL
+  - approved_date date
+  - id_conseil integer
+  - id_group integer
+  - general_budget_cup numeric
+  - general_budget_cuc numeric
+  - year_budget_cup numeric
+  - year_budget_cuc numeric
+  - is_international boolean DEFAULT false NOT NULL
+  - is_national boolean DEFAULT false NOT NULL
+  - is_territorial boolean DEFAULT false NOT NULL
+  - is_cujae boolean DEFAULT false NOT NULL
+
+Tabla: public.project_classification
+  - id_project_classification integer DEFAULT nextval('public.project_classification_id_project_classification_seq'::regclass) NOT NULL
+  - name character varying
+  - code character varying
+
+Tabla: public.project_integrant
+  - id_project_integrant integer DEFAULT nextval('public.project_integrant_id_project_integrant_seq'::regclass) NOT NULL
+  - id_project integer NOT NULL
+  - id_integrant integer NOT NULL
+  - admin boolean DEFAULT false NOT NULL
+
+Tabla: public.project_keyword
+  - id_project_keyword integer DEFAULT nextval('public.project_keyword_id_project_keyword_seq'::regclass) NOT NULL
+  - id_project integer
+  - id_keyword integer
+
+Tabla: public.project_state
+  - id_project_state integer DEFAULT nextval('public.project_state_id_project_state_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.project_type
+  - id_project_type integer DEFAULT nextval('public.project_type_id_project_type_seq'::regclass) NOT NULL
+  - name character varying(50) NOT NULL
+
+Tabla: public.research_task
+  - id_research_task integer DEFAULT nextval('public.research_task_id_research_task_seq'::regclass) NOT NULL
+  - name character varying
+  - description character varying
+  - id_responsible integer
+  - initial_date date
+  - final_date date
+  - id_project integer
+  - sort_order integer DEFAULT 0
+  - id_research_task_state integer
+  - compliance_report character varying
+  - remote_task boolean DEFAULT false NOT NULL
+  - estimation_time integer
+  - execution_time integer
+
+Tabla: public.research_task_state
+  - id_research_task_state integer DEFAULT nextval('public.research_task_state_id_research_task_state_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.roles
+  - id_rol integer NOT NULL
+  - role_name character varying
+
+Tabla: public.softwares
+  - id_software integer DEFAULT nextval('public.softwares_id_software_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - number character varying NOT NULL
+  - yearfiled character varying NOT NULL
+  - language character varying
+  - assignee character varying
+  - monthfield character varying
+  - keywords character varying
+  - resume character varying
+  - report_date date
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_country integer
+  - is_conceded boolean DEFAULT false NOT NULL
+  - id_project integer
+  - only_date date
+  - is_multimedia boolean DEFAULT false NOT NULL
+  - id_group integer
+
+Tabla: public.softwares_authors
+  - id_software_author integer DEFAULT nextval('public.softwares_authors_id_software_author_seq'::regclass) NOT NULL
+  - id_software integer
+  - id_author integer
+
+Tabla: public.specific_objective
+  - id_specific_objective integer DEFAULT nextval('public.specific_objective_id_specific_objective_seq'::regclass) NOT NULL
+  - name character varying
+  - description character varying
+  - id_project integer
+  - sort_order integer DEFAULT 0
+
+Tabla: public.theses
+  - id_thesis integer DEFAULT nextval('public.theses_id_thesis_seq'::regclass) NOT NULL
+  - title character varying NOT NULL
+  - institution character varying NOT NULL
+  - keywords character varying
+  - resume character varying
+  - id_thesis_type integer
+  - report_date date
+  - id_country integer
+  - month_only integer DEFAULT 1 NOT NULL
+  - year_only integer DEFAULT 2009 NOT NULL
+  - id_project integer
+  - only_date date
+  - id_group integer
+
+Tabla: public.theses_authors
+  - id_thesis_author integer DEFAULT nextval('public.theses_authors_id_thesis_author_seq'::regclass) NOT NULL
+  - id_thesis integer
+  - id_author integer
+
+Tabla: public.theses_tutors
+  - id_thesis_tutor integer DEFAULT nextval('public.theses_tutors_id_thesis_tutor_seq'::regclass) NOT NULL
+  - id_thesis integer
+  - id_author integer
+
+Tabla: public.theses_types
+  - id_thesis_type integer DEFAULT nextval('public.theses_types_id_thesis_type_seq'::regclass) NOT NULL
+  - name character varying
+
+Tabla: public.trace
+  - id_trace integer DEFAULT nextval('public.trace_id_trace_seq'::regclass) NOT NULL
+  - id_integrant integer
+  - method character varying
+  - date timestamp with time zone
+  - route character varying
+  - message character varying
+  - response integer

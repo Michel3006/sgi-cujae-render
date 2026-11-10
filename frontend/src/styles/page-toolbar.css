@@ -1,0 +1,16 @@
+.page-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.page-toolbar__lead {
+  margin: 0;
+  max-width: 42rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}

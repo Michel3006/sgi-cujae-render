@@ -1,0 +1,218 @@
+================================================================================
+  TECNOLOGÍAS DEL PROYECTO — AGENTE CONVERSACIONAL (CHATBOT)
+  Sistema de gestión de la investigación — Universidad Tecnológica
+  José Antonio Echeverría (CUJAE)
+================================================================================
+
+Proyecto: modelo_api (backend del agente / API de inferencia y consulta a datos)
+Repositorio: Backend/modelo_api
+Fecha de elaboración: mayo 2026
+
+--------------------------------------------------------------------------------
+1. INTRODUCCIÓN Y OBJETIVO DEL SISTEMA
+--------------------------------------------------------------------------------
+
+El presente backend implementa el núcleo del agente conversacional que apoya el
+sistema de gestión de la actividad científica e investigativa de la CUJAE. Su
+función principal es:
+
+  a) Exponer una API REST para que el frontend (o Postman) envíe preguntas en
+     lenguaje natural.
+  b) Traducir esas preguntas a consultas SQL seguras sobre PostgreSQL
+     (enfoque text-to-SQL asistido por modelo de lenguaje).
+  c) Ejecutar las consultas en la base de datos institucional y devolver una
+     respuesta en español fundamentada en los resultados reales.
+
+El diseño prioriza: seguridad en base de datos (solo lectura), ejecución local
+del modelo (privacidad y costo), y reglas de dominio (CUJAE, sinónimos, búsqueda
+por similitud) para reducir alucinaciones del LLM.
+
+--------------------------------------------------------------------------------
+2. ARQUITECTURA GENERAL (VISTA DE COMPONENTES)
+--------------------------------------------------------------------------------
+
+  [Cliente web / Postman]
+           |
+           v
+  +---------------------+
+  |  FastAPI + Uvicorn  |  <- API REST (Python)
+  +---------------------+
+     |              |
+     |              +------------------+
+     v                                 v
+  +------------------+          +------------------+
+  |  LM Studio       |          |  PostgreSQL      |
+  |  (LLM local)     |          |  (datos CUJAE)   |
+  |  API OpenAI-like |          |  asyncpg pool    |
+  +------------------+          +------------------+
+
+Flujo principal del endpoint /chat/ask-data:
+
+  1. El usuario envía una pregunta (JSON).
+  2. Primera llamada al LLM: genera JSON { sql, direct_answer } usando el
+     esquema (schema_context.txt) y reglas de dominio.
+  3. Si hay SQL: validación (sql_guard), normalización fuzzy (sql_fuzzy),
+     ejecución en PostgreSQL, segunda llamada al LLM para redactar respuesta.
+  4. Si no hay SQL: respuesta directa (saludos, temas fuera de alcance).
+
+--------------------------------------------------------------------------------
+3. TECNOLOGÍAS UTILIZADAS Y JUSTIFICACIÓN
+--------------------------------------------------------------------------------
+
+3.1. Lenguaje: Python 3.11+
+---------------------------
+JUSTIFICACIÓN:
+  - Ecosistema maduro para APIs, IA y ciencia de datos.
+  - Sintaxis clara para tesis y mantenimiento por el equipo de desarrollo.
+  - Soporte nativo de async/await, necesario para I/O concurrente (HTTP + BD).
+
+3.2. Framework web: FastAPI 0.110
+---------------------------------
+JUSTIFICACIÓN:
+  - Alto rendimiento (basado en Starlette/ASGI), adecuado para un servicio que
+    orquesta varias llamadas HTTP al LLM y a la base de datos.
+  - Validación automática de entradas/salidas con Pydantic (menos errores en
+    contratos del chatbot).
+  - Documentación OpenAPI integrada (/docs), útil para integrar el frontend del
+    sistema de gestión de la investigación y para pruebas en tesis.
+  - Inyección de dependencias para pool de BD y cliente HTTP reutilizable.
+
+3.3. Servidor ASGI: Uvicorn 0.27 (standard)
+--------------------------------------------
+JUSTIFICACIÓN:
+  - Estándar de facto para desplegar FastAPI en desarrollo y producción ligera.
+  - Permite recarga en caliente durante el desarrollo del agente.
+  - Compatible con despliegues detrás de nginx o en máquina local junto a
+    LM Studio en estaciones de trabajo de la universidad.
+
+3.4. Validación y configuración: Pydantic 2.6 + pydantic-settings 2.2
+-----------------------------------------------------------------------
+JUSTIFICACIÓN:
+  - Modelos AskDataRequest / AskDataResponse garantizan que las preguntas del
+    usuario y las respuestas del agente tengan estructura consistente.
+  - Carga de variables desde .env (DATABASE_URL, LM_STUDIO_BASE_URL, límites
+    SQL) sin hardcodear secretos en el código — requisito básico de seguridad
+    en un sistema institucional.
+
+3.5. Cliente HTTP asíncrono: HTTPX 0.27
+----------------------------------------
+JUSTIFICACIÓN:
+  - Comunicación no bloqueante con LM Studio (API compatible con OpenAI:
+    /chat/completions, /models).
+  - Un único AsyncClient en el ciclo de vida de la aplicación (lifespan) evita
+    abrir conexiones por cada pregunta del chatbot — mejor latencia bajo carga.
+  - Manejo uniforme de errores del servidor de inferencia (mensajes legibles).
+
+3.6. Base de datos: PostgreSQL + asyncpg 0.29
+-----------------------------------------------
+JUSTIFICACIÓN:
+  - PostgreSQL es el SGBD del sistema de gestión de la investigación de la CUJAE
+    (esquema relacional rico: integrantes, proyectos, artículos, tesis, etc.).
+  - asyncpg ofrece acceso asíncrono de alto rendimiento, alineado con FastAPI.
+  - Se recomienda usuario de solo lectura (SELECT): el agente no debe modificar
+    producción científica vía lenguaje natural (principio de mínimo privilegio).
+  - Pool de conexiones (min/max) para reutilizar sesiones en consultas repetidas
+    durante sesiones de chat.
+
+3.7. Motor de inferencia local: LM Studio
+-----------------------------------------
+JUSTIFICACIÓN:
+  - Permite ejecutar modelos LLM (Llama, Mistral, Qwen, etc.) en hardware local
+    sin depender de APIs cloud — importante para datos institucionales y costos.
+  - Expone API tipo OpenAI; el backend no queda acoplado a un proveedor concreto.
+  - Ajuste de contexto (n_ctx), temperatura y max_tokens según GPU/RAM del
+    laboratorio o servidor de la tesis.
+  - Separación clara: LM Studio = razonamiento y lenguaje; PostgreSQL = verdad
+    factual (evita que el modelo invente cifras si el flujo SQL funciona).
+
+3.8. Enfoque text-to-SQL y contexto de esquema
+------------------------------------------------
+ARCHIVOS CLAVE: schema_context.txt, scripts/extract_schema_from_dump.py
+
+JUSTIFICACIÓN:
+  - El LLM no “conoce” la BD; se le inyecta un resumen de tablas/columnas
+    extraído del volcado PostgreSQL (.cursor/bd/sistema_integrado.sql).
+  - Limita alucinaciones de nombres de tablas inexistentes.
+  - El script de extracción permite regenerar el contexto cuando evolucione el
+    esquema del sistema de gestión.
+
+3.9. Módulos de seguridad y calidad del SQL (código propio)
+-------------------------------------------------------------
+  - sql_guard.py: solo SELECT, una sentencia, sin comentarios, límite de filas.
+  - sql_fuzzy.py: convierte filtros exactos (=) en ILIKE por fragmentos.
+  - sql_llm.py: parsea JSON del modelo (sql / direct_answer).
+  - ask_data_prompts.py: contexto CUJAE, sinónimos, reglas de búsqueda flexible.
+
+JUSTIFICACIÓN:
+  - Capas defensivas porque los LLM pueden generar SQL peligroso o demasiado
+    restrictivo (nombres exactos). Complementan el prompt con validación
+    determinista — requisito defendible en tesis de ingeniería.
+
+3.10. Middleware y CORS
+------------------------
+  - UnhandledErrorMiddleware: respuestas 500 controladas sin filtrar trazas al
+    cliente del chatbot.
+  - CORSMiddleware: permite consumo desde frontend en localhost (React/Vue/
+    Angular típico en proyectos universitarios).
+
+3.11. Herramientas auxiliares
+------------------------------
+  - python-dotenv: carga de configuración local.
+  - Node.js / package.json (httpx): dependencia menor; puede usarse para scripts
+    cliente; el núcleo del agente es Python.
+  - pytest (requirements-dev.txt): pruebas automatizadas documentadas aparte.
+
+3.12. Tecnologías del ecosistema institucional (relacionadas, no en este repo)
+------------------------------------------------------------------------------
+  - Frontend del sistema de gestión de la investigación (consumidor de la API).
+  - PostgreSQL con volcado sistema_integrado.sql como fuente de verdad.
+  - Posible despliegue: Windows/Linux, GPU NVIDIA para LM Studio.
+
+--------------------------------------------------------------------------------
+4. CRITERIOS DE SELECCIÓN TECNOLÓGICA (RESUMEN PARA TESIS)
+--------------------------------------------------------------------------------
+
+| Criterio              | Elección           | Motivo principal                          |
+|-----------------------|--------------------|-------------------------------------------|
+| Datos institucionales | PostgreSQL local   | Es la BD real del sistema CUJAE           |
+| Privacidad / costo    | LM Studio local    | Sin enviar datos sensibles a la nube      |
+| Integración           | FastAPI + REST     | Contrato claro para el frontend           |
+| Seguridad SQL         | sql_guard + RO user| Solo lectura, una sentencia               |
+| Calidad respuestas    | 2 pasadas LLM+JSON | SQL verificable + respuesta con datos     |
+| Dominio CUJAE         | Prompts + fuzzy    | Menos alucinaciones y nombres exactos     |
+
+--------------------------------------------------------------------------------
+5. VARIABLES DE ENTORNO RELEVANTES (.env.example)
+--------------------------------------------------------------------------------
+
+  LM_STUDIO_BASE_URL    — URL del servidor de inferencia (ej. :1234/v1)
+  DATABASE_URL          — Cadena PostgreSQL para asyncpg
+  SQL_SCHEMA_CONTEXT_PATH — Archivo de esquema para el LLM
+  SQL_MAX_ROWS          — Tope de filas por consulta (protección)
+  SQL_SCHEMA_MAX_CHARS  — Recorte del esquema según contexto del modelo
+  API_PREFIX            — Prefijo de rutas (ej. /api)
+
+--------------------------------------------------------------------------------
+6. ENDPOINTS PRINCIPALES DEL AGENTE
+--------------------------------------------------------------------------------
+
+  GET  {API_PREFIX}/health                 — Estado del servicio
+  GET  {API_PREFIX}/models                 — Modelos disponibles en LM Studio
+  POST {API_PREFIX}/chat                   — Chat genérico (proxy a LM Studio)
+  POST {API_PREFIX}/chat/ask-data          — Pregunta + consulta BD + respuesta
+  GET  {API_PREFIX}/chat/ask-data/status   — Diagnóstico BD y esquema
+
+--------------------------------------------------------------------------------
+7. CONCLUSIÓN
+--------------------------------------------------------------------------------
+
+La pila tecnológica seleccionada responde a un agente conversacional híbrido:
+modelo de lenguaje para comprensión y redacción, base de datos relacional para
+hechos, y capas de software específicas del dominio CUJAE. Esta combinación es
+adecuada para un sistema de gestión de la investigación universitario donde la
+trazabilidad, la seguridad de lectura y la reducción de alucinaciones son tan
+importantes como la fluidez del diálogo.
+
+================================================================================
+Fin del documento
+================================================================================

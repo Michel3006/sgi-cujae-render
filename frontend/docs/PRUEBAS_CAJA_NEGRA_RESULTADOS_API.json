@@ -1,0 +1,147 @@
+{
+  "generatedAt": "2026-06-04T17:35:44.339Z",
+  "baseUrl": "http://127.0.0.1:8000",
+  "summary": {
+    "total": 22,
+    "pass": 21,
+    "fail": 0,
+    "warn": 0,
+    "skip": 1
+  },
+  "results": [
+    {
+      "id": "TC-API-001",
+      "name": "Disponibilidad del servidor",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "TC-API-002",
+      "name": "Login credenciales incorrectas",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-003",
+      "name": "Login con email (schema repo)",
+      "status": "PASS",
+      "detail": "HTTP 422 — runtime exige user_name"
+    },
+    {
+      "id": "TC-API-004",
+      "name": "Login demo",
+      "status": "SKIP",
+      "detail": "HTTP 401; usando AUTH_TOKEN del entorno"
+    },
+    {
+      "id": "TC-API-005a",
+      "name": "GET Artículos sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-005b",
+      "name": "GET Grupos sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-005c",
+      "name": "GET Proyectos sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-005d",
+      "name": "GET Integrantes sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-005e",
+      "name": "GET Roles sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-005f",
+      "name": "GET Tesis sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-006",
+      "name": "POST /articles/ sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-007",
+      "name": "PUT /integrants/{id} sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-008",
+      "name": "GET /zenodo/entity-types sin autenticación",
+      "status": "PASS",
+      "detail": "HTTP 401"
+    },
+    {
+      "id": "TC-API-009",
+      "name": "Suite autenticada",
+      "status": "PASS",
+      "detail": "Token disponible"
+    },
+    {
+      "id": "TC-API-010",
+      "name": "GET /roles/ estructura de ID",
+      "status": "PASS",
+      "detail": "id_role=false, id_rol=true",
+      "finding": "Serializa id_rol; front normaliza"
+    },
+    {
+      "id": "TC-API-011",
+      "name": "GET integrante autenticado",
+      "status": "PASS",
+      "detail": "roles=[CONSEJO]"
+    },
+    {
+      "id": "TC-API-012a",
+      "name": "Listar Grupos autenticado",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "TC-API-012b",
+      "name": "Listar Proyectos autenticado",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "TC-API-012c",
+      "name": "Listar Artículos autenticado",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "TC-API-013",
+      "name": "Conteo proyectos por facultad",
+      "status": "PASS",
+      "detail": "HTTP 200"
+    },
+    {
+      "id": "TC-API-014",
+      "name": "PUT roles otro integrante (según rol caller)",
+      "status": "PASS",
+      "detail": "HTTP 403 caller=[CONSEJO]",
+      "expected": "No admin → 403/401"
+    },
+    {
+      "id": "TC-API-015",
+      "name": "GET /zenodo/publications autenticado",
+      "status": "PASS",
+      "detail": "HTTP 403"
+    }
+  ]
+}

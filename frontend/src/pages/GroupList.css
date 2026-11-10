@@ -1,0 +1,129 @@
+.group-list {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.group-list-header {
+  display: flex;
+  /* Changed to space-between to push button to the right */
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-lg);
+}
+
+.group-list-header h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.group-list-header p {
+  color: var(--color-text-secondary);
+}
+
+.group-list-filters {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.form-select {
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.form-select:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.group-list-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.group-list-filter label {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.filter-select:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface-hover);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.group-list-search {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: 500px;
+}
+
+.group-list-search svg {
+  color: var(--color-text-muted);
+}
+
+.table-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .group-list-header {
+    flex-direction: column;
+  }
+
+  .group-list-search {
+    max-width: 100%;
+  }
+}

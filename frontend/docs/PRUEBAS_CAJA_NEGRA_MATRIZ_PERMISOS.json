@@ -1,0 +1,797 @@
+{
+  "generatedAt": "2026-06-04T17:35:44.381Z",
+  "matrix": [
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P01",
+      "persona": "Solo Usuario",
+      "roles": [
+        "usuario"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": true
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P02",
+      "persona": "Solo Autor",
+      "roles": [
+        "usuario",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": true
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": true
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P03",
+      "persona": "Solo Consejo",
+      "roles": [
+        "usuario",
+        "consejo"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": true
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": true
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P04",
+      "persona": "Solo Publicador",
+      "roles": [
+        "usuario",
+        "publicador"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": false
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": true
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": true
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": true
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": false
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P05",
+      "persona": "Consejo + Autor",
+      "roles": [
+        "usuario",
+        "consejo",
+        "autor_registro"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": true
+    },
+    {
+      "personaId": "P06",
+      "persona": "Administrador",
+      "roles": [
+        "admin",
+        "usuario"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": true
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": true
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": false
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": false
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": true
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P07",
+      "persona": "Autor + Publicador",
+      "roles": [
+        "usuario",
+        "autor_registro",
+        "publicador"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-01",
+      "action": "Crear registro nuevo",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-02",
+      "action": "Crear grupo",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-03",
+      "action": "Crear proyecto",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-04",
+      "action": "Publicar Zenodo",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-05",
+      "action": "Modificar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-06",
+      "action": "Modificar registro propio (autor)",
+      "allowed": true
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-07",
+      "action": "Eliminar registro ajeno",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-08",
+      "action": "Gestionar usuarios",
+      "allowed": false
+    },
+    {
+      "personaId": "P08",
+      "persona": "Legacy integrant",
+      "roles": [
+        "integrant"
+      ],
+      "testId": "TC-PERM-09",
+      "action": "Ver estadísticas",
+      "allowed": false
+    }
+  ]
+}

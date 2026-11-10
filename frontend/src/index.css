@@ -1,0 +1,199 @@
+@import "./styles/page-toolbar.css";
+@import "./styles/list-page.css";
+@import "./styles/form-page.css";
+
+:root {
+  /* Primary Colors - Green Palette */
+  --color-primary: #00835c; /* PANTONE 555 cv */
+  --color-primary-dark: #006847; /* PANTONE 328c */
+  --color-primary-light: #7fa99c; /* PANTONE 555 cv 40% */
+  --color-accent: #00a88e; /* PANTONE 326c */
+  --color-accent-light: #8fc4b8; /* ORACAL 054 Turquoise */
+
+  /* Neutral Colors */
+  --color-gray-dark: #666666; /* PANTONE Process Black 40% cv */
+  --color-gray: #97999b; /* PANTONE Cool Gray 7c */
+  --color-gray-light: #a8a8a8; /* ORACAL 076 Telegrey */
+  --color-gray-lighter: #e5e5e5;
+
+  /* Black */
+  --color-black: #000000; /* PANTONE Process Black 100% */
+
+  /* White */
+  --color-white: #ffffff;
+
+  /* Background Colors */
+  --color-bg-primary: var(--color-white);
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #f0f4f3;
+
+  /* Text Colors */
+  --color-text-primary: var(--color-black);
+  --color-text-secondary: var(--color-gray-dark);
+  --color-text-muted: var(--color-gray);
+  --color-text-inverse: var(--color-white);
+
+  /* Border Colors */
+  --color-border: var(--color-gray-lighter);
+  --color-border-dark: var(--color-gray-light);
+
+  /* Status Colors */
+  --color-success: var(--color-primary);
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: var(--color-accent);
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-mono: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: var(--font-mono);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: 2.25rem;
+}
+
+h2 {
+  font-size: 1.875rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1.125rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Utility Classes */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-sm {
+  margin-top: var(--spacing-sm);
+}
+.mt-md {
+  margin-top: var(--spacing-md);
+}
+.mt-lg {
+  margin-top: var(--spacing-lg);
+}
+.mt-xl {
+  margin-top: var(--spacing-xl);
+}
+
+.mb-sm {
+  margin-bottom: var(--spacing-sm);
+}
+.mb-md {
+  margin-bottom: var(--spacing-md);
+}
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
+.mb-xl {
+  margin-bottom: var(--spacing-xl);
+}
+
+.p-sm {
+  padding: var(--spacing-sm);
+}
+.p-md {
+  padding: var(--spacing-md);
+}
+.p-lg {
+  padding: var(--spacing-lg);
+}
+.p-xl {
+  padding: var(--spacing-xl);
+}
